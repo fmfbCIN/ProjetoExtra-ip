@@ -7,6 +7,41 @@ extern "C" {
 #include "extApi.h"
 }
 
+void funcao(float digito){
+     float numj3[] = {-PI / 35,PI / 45, PI / 20, PI / 20, PI / 150,PI / 45, PI / 30, -PI / 55,0,PI / 200}
+	float numj2[] = {-PI / 4,-PI / 4, -PI / 4, -PI / 4, -PI / 4.5,-PI / 4,-PI / 4, -PI / 4.5,-PI / 4,-PI / 4}
+	float numj1[] = {-PI / 11, -PI / 15, -PI / 11, -PI / 10, -PI / 15, -PI / 11, -PI / 9.5,-PI / 15,-PI / 11,-PI / 9.5}
+	float backj2[] = {-PI / 3.75, -PI / 3.8, -PI / 3.6, -PI / 3.55, -PI / 3.8, -PI / 3.70,-PI / 3.6,-PI / 3.9,-PI / 3.75,-PI / 3.65}
+
+	float t1[] = {1000, 1000, 2000, 3000, 4000, 2000, 3000, 2000, 2000, 2000}
+	float t2[] = {1000, 3000, 2000, 1000, 5000, 1000, 5000, 2000, 2000, 3000}
+	float t3[] = {1000, 3000, 2000, 2000, 2000, 1000, 3000, 2000, 1000, 2000}
+	float t4[] = {1000, 3000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000}
+
+    strcpy(handlerName, "/base_link_respondable[0]/joint_3");
+    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
+    simxSetJointTargetPosition(clientID, handler, (simxFloat)numj3[digito], (simxInt)simx_opmode_oneshot_wait);
+    extApi_sleepMs(t1[digito]);
+
+
+    strcpy(handlerName, "/base_link_respondable[0]/joint_2");
+    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
+    simxSetJointTargetPosition(clientID, handler, (simxFloat)numj2[digito], (simxInt)simx_opmode_oneshot_wait);
+    extApi_sleepMs(t2[digito]);
+
+
+    strcpy(handlerName, "/base_link_respondable[0]/joint_1");
+    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
+    simxSetJointTargetPosition(clientID, handler, (simxFloat)numj1[digito], (simxInt)simx_opmode_oneshot_wait);
+    extApi_sleepMs(t3[digito]);
+
+
+    strcpy(handlerName, "/base_link_respondable[0]/joint_2");
+    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
+    simxSetJointTargetPosition(clientID, handler, (simxFloat)backj2[digito], (simxInt)simx_opmode_oneshot_wait);
+    extApi_sleepMs(t4[digito]);
+}
+
 int main(int argc, char* argv[]){
 
     int handler = 0;
@@ -44,14 +79,7 @@ int main(int argc, char* argv[]){
     simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI/11, (simxInt)simx_opmode_oneshot_wait);
     extApi_sleepMs(3000);
     	
-    	float numj3[] = {-PI / 35,PI / 45, PI / 20, PI / 20, PI / 150,PI / 45, PI / 30, -PI / 55,0,PI / 200}
-	float numj2[] = {-PI / 4,-PI / 4, -PI / 4, -PI / 4, -PI / 4.5,-PI / 4,-PI / 4, -PI / 4.5,-PI / 4,-PI / 4}
-	float numj1[] = {-PI / 11, -PI / 15, -PI / 11, -PI / 10, -PI / 15, -PI / 11, -PI / 9.5,-PI / 15,-PI / 11,-PI / 9.5}
-	float backj2[] = {-PI / 3.75, -PI / 3.8, -PI / 3.6, -PI / 3.55, -PI / 3.8, -PI / 3.70,-PI / 3.6,-PI / 3.9,-PI / 3.75,-PI / 3.65}
-	float t1[] = {1000, 1000, 2000, 3000, 4000, 2000, 3000, 2000, 2000, 2000}
-	float t2[] = {1000, 3000, 2000, 1000, 5000, 1000, 5000, 2000, 2000, 3000}
-	float t3[] = {1000, 3000, 2000, 2000, 2000, 1000, 3000, 2000, 1000, 2000}
-	float t4[] = {1000, 3000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000}
+
     	int digito;
         char numero[6];
         int cont;
@@ -69,28 +97,7 @@ int main(int argc, char* argv[]){
                 tam = strlen(numero);
                 for (cont = 0; cont < tam; cont++) {
                     	digito = numero[cont] - 48;
-                    	strcpy(handlerName, "/base_link_respondable[0]/joint_3");
-                        simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                        simxSetJointTargetPosition(clientID, handler, (simxFloat)numj3[digito], (simxInt)simx_opmode_oneshot_wait);
-                        extApi_sleepMs(t1[digito]);
-
-
-                        strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-                        simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                        simxSetJointTargetPosition(clientID, handler, (simxFloat)numj2[digito], (simxInt)simx_opmode_oneshot_wait);
-                        extApi_sleepMs(t2[digito]);
-
-
-                        strcpy(handlerName, "/base_link_respondable[0]/joint_1");
-                        simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                        simxSetJointTargetPosition(clientID, handler, (simxFloat)numj1[digito], (simxInt)simx_opmode_oneshot_wait);
-                        extApi_sleepMs(t3[digito]);
-
-
-                        strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-                        simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                        simxSetJointTargetPosition(clientID, handler, (simxFloat)backj2[digito], (simxInt)simx_opmode_oneshot_wait);
-                        extApi_sleepMs(t4[digito]);
+                    	funcao(digito);
                     }
                     //VOLTANDO PARA O PONTO DEFINIDO
 
