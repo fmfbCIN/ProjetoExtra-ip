@@ -8,8 +8,11 @@
 extern "C" {
 #include "extApi.h"
 }
-void Pos0(int clientID, int handler){
-    
+void Pos0(){
+    int handler = 0;
+
+    int clientID = simxStart((simxChar*) "127.0.0.1", 19999, true, true, 2000, 5);
+
     simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
     extApi_sleepMs(2000);
 
@@ -95,7 +98,7 @@ int main(int argc, char* argv[])
                     simxChar handlerNameR1[150] = "/NiryoOne/Joint";
                     simxGetObjectHandle(clientID, handlerNameR1, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
                     
                     strcat(handlerNameR1, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerNameR1, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -129,7 +132,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName2, "/NiryoOne/Joint");
                     simxGetObjectHandle(clientID, handlerName2, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
 
                     strcat(handlerName2, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName2, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -167,7 +170,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName3, "/NiryoOne/Joint");
                     simxGetObjectHandle(clientID, handlerName3, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
 
                     strcat(handlerName3, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName3, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -204,7 +207,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName4, "/NiryoOne/Joint/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName4, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
 
                     strcat(handlerName4, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName4, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -241,7 +244,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName5, "/NiryoOne/Joint/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName5, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
                         
                     strcat(handlerName5, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName5, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -278,7 +281,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName6, "/NiryoOne/Joint/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName6, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
 
                     strcat(handlerName6, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName6, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -315,7 +318,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName7, "/NiryoOne/Joint/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName7, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
                     
                     strcat(handlerName7, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName7, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -353,7 +356,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName8, "/NiryoOne/Joint/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName8, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
 
                     strcat(handlerName8, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName8, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -391,7 +394,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName9, "/NiryoOne/Joint/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName9, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
 
                     strcat(handlerName9, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName9, &handler, (simxInt)simx_opmode_oneshot_wait);
@@ -431,7 +434,7 @@ int main(int argc, char* argv[])
                     strcpy(handlerName0, "/NiryoOne/Joint/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName0, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                    pos0(clientID,handler);
+                    pos0();
                 
                     strcat(handlerName0, "/Link/Joint");
                     simxGetObjectHandle(clientID, (simxChar*)handlerName0, &handler, (simxInt)simx_opmode_oneshot_wait);
