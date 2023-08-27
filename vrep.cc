@@ -1,3 +1,5 @@
+//codigo de joao
+
 #define PI 3.14
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,179 +9,986 @@ extern "C" {
 #include "extApi.h"
 }
 
+void carregaVotos(int* qtdVotos, char*** votos)
+{
+    FILE* arq;
+    char voto[100];
+    arq = fopen("votos.txt", "r");
+    int digitos = 0;
+    if (arq == NULL)
+    {
+        printf("Nao foi possivel computar votos\n"); exit(1);
+    }
+    while (!feof(arq))
+    {
+        fscanf(arq, "%99[^\n]\n", voto);
+        digitos = strlen(voto);
+        (*qtdVotos)++;
+        (*votos) = (char**)realloc((*votos), (*qtdVotos) * sizeof(char*));
+        (*votos)[(*qtdVotos) - 1] = NULL;
+        (*votos)[(*qtdVotos) - 1] = (char*) realloc((*votos)[(*qtdVotos) - 1], digitos * sizeof(char));
+        strcpy((*votos)[(*qtdVotos) - 1], voto);
+    }
+    fclose(arq);
+}
+float radian(float grau)
+{
+    float rad;
+    rad = (grau * PI) / 180;
 
-int main(int argc, char* argv[]) {
+    return rad;
+}
+
+int main(int argc, char* argv[])
+{
+    char** votos = NULL;
+    int qtdVotos = 0;
+
+    carregaVotos(&qtdVotos, &votos);
+
     int handler = 0;
 
-
-    int clientID = simxStart((simxChar*)"127.0.0.1", 19999, true, true, 2000, 5);
+    int clientID = simxStart((simxChar*) "127.0.0.1", 19999, true, true, 2000, 5);
 
     extApi_sleepMs(500);
-
 
     if (clientID == -1) {
         printf("Erro conectando ao Coppelia!\n");
         return 0;
-    }
-    else {
+    } else {
         printf("Conectado ao Coppelia!\n");
     }
+    
+    for (int i = 0; i < qtdVotos; i++) {
+        
+        int k = strlen(votos[i]);
 
-    //Definir ponto central para movimentação do robô (em cima do número 5)
-    simxChar handlerName[150] = "/base_link_respondable[0]/joint_3";
-    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
-    extApi_sleepMs(100);
-    simxSetJointTargetPosition(clientID, handler, (simxFloat)PI / 45, (simxInt)simx_opmode_oneshot_wait);
-    extApi_sleepMs(100);
+        printf("voto #%d/%d = %s\n", i + 1, qtdVotos, votos[i]);
+
+            for (int j = 0; j < k; j++) {
+                
+                if (votos[i][j] == '1')
+                {
+                    simxChar handlerName1[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName1, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++) 
+                    {
+
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)-0.20, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)-0.84, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0.13, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(3000);
+                        }
+
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0.1, (simxInt)simx_opmode_oneshot_wait);
+                        }
+
+                        strcat(handlerName1, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName1, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    simxChar handlerNameR1[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerNameR1, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++) {
+
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                        }
+
+                        strcat(handlerNameR1, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerNameR1, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerNameR1, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerNameR1, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                }
+
+                if (votos[i][j] == '2')
+                {
+                    simxChar handlerName2[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName2, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++) {
+
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-20.8418), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-63.5543), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(0.205), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-23.487), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(64.3565), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(10.2405), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+
+                        }
+
+                        strcat(handlerName2, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName2, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName2, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName2, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++) {
+
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+
+                        strcat(handlerName2, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName2, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName2, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName2, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                }
+
+                if (votos[i][j] == '3')
+                {
+                    simxChar handlerName3[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName3, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++) {
+
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-27.5), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-62.6473), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(5.06), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-31.9732), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(60.6), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(16.6357), (simxInt)simx_opmode_oneshot_wait);
 
 
-    strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-    simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 4, (simxInt)simx_opmode_oneshot_wait);
-    extApi_sleepMs(100);
+                        }
+
+                        strcat(handlerName3, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName3, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName3, "/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName3, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(55.6), (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(2000);
 
 
-    strcpy(handlerName, "/base_link_respondable[0]/joint_1");
-    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-    simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 11, (simxInt)simx_opmode_oneshot_wait);
-    extApi_sleepMs(100);
+                    strcpy(handlerName3, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName3, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-    float numj3[] = { -PI / 35,PI / 45, PI / 20, PI / 20, PI / 150,PI / 45, PI / 30, -PI / 55,0,PI / 200 };
-    float numj2[] = { -PI / 4,-PI / 4, -PI / 4, -PI / 4, -PI / 4.5,-PI / 4,-PI / 4, -PI / 4.5,-PI / 4,-PI / 4 };
-    float numj1[] = { -PI / 11, -PI / 15, -PI / 11, -PI / 10, -PI / 15, -PI / 11, -PI / 9.5,-PI / 15,-PI / 11,-PI / 9.5 };
-    float backj2[] = { -PI / 3.75, -PI / 3.8, -PI / 3.6, -PI / 3.55, -PI / 3.8, -PI / 3.70,-PI / 3.6,-PI / 3.9,-PI / 3.75,-PI / 3.65 };
-    float t1[] = { 1000, 1000, 2000, 3000, 4000, 2000, 3000, 2000, 2000, 2000 };
-    float t2[] = { 1000, 3000, 2000, 1000, 5000, 1000, 5000, 2000, 2000, 3000 };
-    float t3[] = { 1000, 3000, 2000, 2000, 2000, 1000, 3000, 2000, 1000, 2000 };
-    float t4[] = { 1000, 3000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000 };
-    int digito;
-    char numero[100];
-    int cont;
-    int tam;
-    FILE* arq;
-    arq = fopen("votos.txt", "r");
-    if (arq == NULL) {
-        printf("Falha ao acessar o arquivo");
-        exit(1);
-    }
-    printf("Sucesso ao acessar o arquivo");
-    while (!feof(arq)) {
-        fscanf(arq," %s\n", numero);
-        printf("%s\n", numero);
-        tam = strlen(numero);
-        for (cont = 0; cont < tam; cont++) {
-            digito = numero[cont] - 48;
-            strcpy(handlerName, "/base_link_respondable[0]/joint_3");
-            simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-            simxSetJointTargetPosition(clientID, handler, (simxFloat)numj3[digito], (simxInt)simx_opmode_oneshot_wait);
-            extApi_sleepMs(t1[digito]);
+                    for (int v = 1; v < 7; v++) {
 
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
 
-            strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-            simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-            simxSetJointTargetPosition(clientID, handler, (simxFloat)numj2[digito], (simxInt)simx_opmode_oneshot_wait);
-            extApi_sleepMs(t2[digito]);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
 
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
 
-            strcpy(handlerName, "/base_link_respondable[0]/joint_1");
-            simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-            simxSetJointTargetPosition(clientID, handler, (simxFloat)numj1[digito], (simxInt)simx_opmode_oneshot_wait);
-            extApi_sleepMs(t3[digito]);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
 
+                        }
 
-            strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-            simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-            simxSetJointTargetPosition(clientID, handler, (simxFloat)backj2[digito], (simxInt)simx_opmode_oneshot_wait);
-            extApi_sleepMs(t4[digito]);
-            //VOLTANDO PARA O PONTO DEFINIDO
+                        strcat(handlerName3, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName3, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-            strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-            simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-            simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 4, (simxInt)simx_opmode_oneshot_wait);
-            extApi_sleepMs(4000);
+                    }
 
+                    strcpy(handlerName3, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName3, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                }
+                if (votos[i][j] == '4')
+                {
+                    simxChar handlerName4[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName4, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-            strcpy(handlerName, "/base_link_respondable[0]/joint_1");
-            simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-            simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 11, (simxInt)simx_opmode_oneshot_wait);
-            extApi_sleepMs(2000);
+                    for (int v = 1; v < 7; v++)
+                    {
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-18.1847), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-59.822), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-5.89), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-25.7076), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(66.7), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(10.42), (simxInt)simx_opmode_oneshot_wait);
 
+                        }
+                        strcat(handlerName4, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName4, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    }
 
-            strcpy(handlerName, "/base_link_respondable[0]/joint_3");
-            simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-            simxSetJointTargetPosition(clientID, handler, (simxFloat)PI / 45, (simxInt)simx_opmode_oneshot_wait);
-            extApi_sleepMs(2000);
-            if (cont == tam - 1) {
-                //CONFIRMANDO VOTO
-                strcpy(handlerName, "/base_link_respondable[0]/joint_3");
-                simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 70, (simxInt)simx_opmode_oneshot_wait);
-                extApi_sleepMs(6000);
+                    strcpy(handlerName4, "/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName4, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(60.13), (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(1200);
 
+                    strcpy(handlerName4, "/NiryoOne/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName4, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-                simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 8, (simxInt)simx_opmode_oneshot_wait);
-                extApi_sleepMs(6000);
+                    for (int v = 2; v < 7; v++) {
 
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
 
-                strcpy(handlerName, "/base_link_respondable[0]/joint_1");
-                simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 8, (simxInt)simx_opmode_oneshot_wait);
-                extApi_sleepMs(6000);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
 
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
 
-                strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-                simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 3.55, (simxInt)simx_opmode_oneshot_wait);
-                extApi_sleepMs(7000);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                        }
 
-                //VOLTANDO PARA O PONTO DEFINIDO
-                strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-                simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 4, (simxInt)simx_opmode_oneshot_wait);
-                extApi_sleepMs(4000);
+                        strcat(handlerName4, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName4, &handler, (simxInt)simx_opmode_oneshot_wait);
 
+                    }
 
-                strcpy(handlerName, "/base_link_respondable[0]/joint_1");
-                simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                simxSetJointTargetPosition(clientID, handler, (simxFloat)-PI / 11, (simxInt)simx_opmode_oneshot_wait);
-                extApi_sleepMs(2000);
+                    strcpy(handlerName4, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName4, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
 
+                }
+                if (votos[i][j] == '5')
+                {
+                    simxChar handlerName5[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName5, &handler, (simxInt)simx_opmode_oneshot_wait);
 
-                strcpy(handlerName, "/base_link_respondable[0]/joint_3");
-                simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-                simxSetJointTargetPosition(clientID, handler, (simxFloat)PI / 45, (simxInt)simx_opmode_oneshot_wait);
+                    for (int v = 1; v < 7; v++)
+                    {
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-23.4947), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-59.822), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-5.89), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-25.7076), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(66.7), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(10.42), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        strcat(handlerName5, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName5, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    }
+
+                    strcpy(handlerName5, "/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName5, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(58.53), (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(1200);
+
+                    strcpy(handlerName5, "/NiryoOne/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName5, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 2; v < 7; v++) {
+
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                        }
+
+                        strcat(handlerName5, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName5, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName5, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName5, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                }
+                if (votos[i][j] == '6')
+                {
+                    simxChar handlerName6[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName6, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++)
+                    {
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-28.803), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-64.357), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(1.269), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-31.967), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(65.53), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(14.065), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        strcat(handlerName6, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName6, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    }
+
+                    strcpy(handlerName6, "/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName6, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(61.53), (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(2000);
+
+                    strcpy(handlerName6, "/NiryoOne/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName6, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 2; v < 7; v++) {
+
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+
+                        strcat(handlerName6, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName6, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName6, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName6, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                }
+                if (votos[i][j] == '7')
+                {
+                    simxChar handlerName7[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName7, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++)
+                    {
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-18.634), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-61.92), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-11.475), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-19.0962), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(71.31), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(5.0745), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(3000);
+                        }
+                        strcat(handlerName7, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName7, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    }
+
+                    strcpy(handlerName7, "/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName7, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(68.53), (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(2000);
+
+                    strcpy(handlerName7, "/NiryoOne/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName7, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 2; v < 7; v++) {
+
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(3000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        
+                        strcat(handlerName7, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName7, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName7, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName7, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                }
+                if (votos[i][j] == '8')
+                {
+                    simxChar handlerName8[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName8, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++)
+                    {
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-25.4769), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-64.028), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-7.61), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-26.8344), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(72.386), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(8.336), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        strcat(handlerName8, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName8, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    }
+
+                    strcpy(handlerName8, "/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName8, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(67.53), (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(2000);
+
+                    strcpy(handlerName8, "/NiryoOne/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName8, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 2; v < 7; v++) {
+
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        
+                        strcat(handlerName8, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName8, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName8, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName8, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                }
+                if (votos[i][j] == '9')
+                {
+                    simxChar handlerName9[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName9, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++)
+                    {
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-29.88), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-65.2646), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-3.72), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-31.7808), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(70.96), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(11.02), (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        strcat(handlerName9, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName9, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    }
+
+                    strcpy(handlerName9, "/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName9, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(65.53), (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(2000);
+
+                    strcpy(handlerName9, "/NiryoOne/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName9, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 2; v < 7; v++) {
+
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                        }
+                        
+                        strcat(handlerName9, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName9, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName9, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName9, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+
+                }
+                if (votos[i][j] == '0')
+                {
+                    simxChar handlerName0[150] = "/NiryoOne/Joint";
+                    simxGetObjectHandle(clientID, handlerName0, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 1; v < 7; v++)
+                    {
+                        if (v == 1)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-26.2714), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+                        }
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-66.9255), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(1000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-10.075), (simxInt)simx_opmode_oneshot_wait);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-26.9766), (simxInt)simx_opmode_oneshot_wait);
+                            
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(79.268), (simxInt)simx_opmode_oneshot_wait);
+                            
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(5.994), (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(2000);
+
+                        }
+                        strcat(handlerName0, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName0, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    }
+
+                    strcpy(handlerName0, "/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName0, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(72.268), (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(2000);
+
+                    strcpy(handlerName0, "/NiryoOne/Joint/Link/Joint");
+                    simxGetObjectHandle(clientID, (simxChar*)handlerName0, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    for (int v = 2; v < 7; v++) {
+
+                        if (v == 2)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(1000);
+                        }
+                        if (v == 3)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(1000);
+                        }
+                        if (v == 4)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(1000);
+                        }
+                        if (v == 5)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(1000);
+                        }
+                        if (v == 6)
+                        {
+                            simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                            extApi_sleepMs(1000);
+                        }
+                        
+                        strcat(handlerName0, "/Link/Joint");
+                        simxGetObjectHandle(clientID, (simxChar*)handlerName0, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+                    }
+
+                    strcpy(handlerName0, "/NiryoOne/Joint");
+                    simxGetObjectHandle(clientID, handlerName0, &handler, (simxInt)simx_opmode_oneshot_wait);
+                    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                    extApi_sleepMs(1000);
+
+                }
+            
+            }
+
+        simxChar handlerNameConf[150] = "/NiryoOne/Joint";
+        simxGetObjectHandle(clientID, handlerNameConf, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+        for (int v = 1; v < 7; v++) {
+
+            if (v == 1)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-34.5314), (simxInt)simx_opmode_oneshot_wait);
+                
+            }
+            if (v == 2)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-72.956), (simxInt)simx_opmode_oneshot_wait);
+               
+            }
+            if (v == 3)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-2.79), (simxInt)simx_opmode_oneshot_wait);
+                
+            }
+            if (v == 4)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(-35.5412), (simxInt)simx_opmode_oneshot_wait);
+       
+            }
+            if (v == 5)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(75.24), (simxInt)simx_opmode_oneshot_wait);
                 extApi_sleepMs(2000);
             }
+            if (v == 6)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)radian(8.3587), (simxInt)simx_opmode_oneshot_wait);
+                extApi_sleepMs(1000);
+            }
+
+            strcat(handlerNameConf, "/Link/Joint");
+            simxGetObjectHandle(clientID, (simxChar*)handlerNameConf, &handler, (simxInt)simx_opmode_oneshot_wait);
+
         }
+        strcpy(handlerNameConf, "/NiryoOne/Joint");
+        simxGetObjectHandle(clientID, handlerNameConf, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+        for (int v = 1; v < 7; v++) {
+
+            if (v == 2)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                extApi_sleepMs(2000);
+            }
+            if (v == 3)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                
+            }
+            if (v == 4)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                
+            }
+            if (v == 5)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+                
+            }
+            if (v == 6)
+            {
+                simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
+            }
+            
+            strcat(handlerNameConf, "/Link/Joint");
+            simxGetObjectHandle(clientID, (simxChar*)handlerNameConf, &handler, (simxInt)simx_opmode_oneshot_wait);
+
+        }
+
+        strcpy(handlerNameConf, "/NiryoOne/Joint");
+        simxGetObjectHandle(clientID, handlerNameConf, &handler, (simxInt)simx_opmode_oneshot_wait);
+        simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
     }
-    //VOLTANDO PARA A POSIÇÃO INICIAL
-    strcpy(handlerName, "/base_link_respondable[0]/joint_3");
-    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
-    extApi_sleepMs(3000);
 
+    printf("fim da votacao!\n");
 
-    strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
-    extApi_sleepMs(15000);
-
-
-    strcpy(handlerName, "/base_link_respondable[0]/joint_1");
-    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
-    extApi_sleepMs(3000);
-
-
-    strcpy(handlerName, "/base_link_respondable[0]/joint_2");
-    simxGetObjectHandle(clientID, handlerName, &handler, (simxInt)simx_opmode_oneshot_wait);
-    simxSetJointTargetPosition(clientID, handler, (simxFloat)0, (simxInt)simx_opmode_oneshot_wait);
-    extApi_sleepMs(2000);
-
-    fclose(arq);
     simxFinish(clientID);
+
     return(0);
 }
