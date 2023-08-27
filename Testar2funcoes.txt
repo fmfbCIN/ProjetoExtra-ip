@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
         }
         fclose(arq);
         //VOLTANDO PARA A POSIÇÃO INICIAL
-        Posicaoinicial(handler, clientID, handlerName);
+        PosicaoInicial(handler, clientID, handlerName);
 
     }
 
