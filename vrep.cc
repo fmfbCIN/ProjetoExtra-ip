@@ -1,4 +1,3 @@
-//codigo de joao
 
 #define PI 3.14
 #include <stdio.h>
